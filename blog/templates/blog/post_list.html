@@ -1,28 +1,35 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="ko">
-<head>
-    <meta charset="UTF-8">
-    <title>Blog</title>
+{% extends 'blog/base.html' %}
+{% block content %}
+    <h1>Blog</h1>
+    {% if object_list.exists %}
+        {% for p in object_list %}
+            <!-- Blog Post -->
+            <div class="card mb-4">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <link rel="stylesheet" href="{% static 'blog/bootstrap/bootstrap.css' %}" media="screen">
-    <link rel="stylesheet" href="{% static 'blog/_assets/css/custom.min.css' %}">
-</head>
-<body>
-<h1>Blog</h1>
+                {% if p.head_image %}
+                    <img class="card-img-top" src="{{ p.head_image.url }}" alt="Card image cap">
+                {% else %}
+                    <img class="card-img-top" src="https://picsum.photos/700/300/?random" alt="Card image cap">
+                {% endif %}
 
-{% for p in object_list %}
-    <h3>{{ p.title }}</h3>
-    <h4>{{ p.created }} by {{ p.author }}</h4>
-    <p>{{ p.content }}</p>
-{% endfor %}
-
-<script src="{% static 'blog/_assets/js/jquery.min.js' %}"></script>
-<script src="{% static 'blog/_assets/js/popper.min.js' %}"></script>
-<script src="{% static 'blog/bootstrap/bootstrap.min.js' %}"></script>
-<script src="{% static 'blog/_assets/js/custom.js' %}"></script>
-
-</body>
-</html>
+                <div class="card-body">
+                    {% if p.category %}
+                        <span class="badge badge-primary float-right">{{ p.category }}</span>
+                    {% else %}
+                        <span class="badge badge-primary float-right">미분류</span>
+                    {% endif %}
+                    <h2 class="card-title">{{ p.title }}</h2>
+                    <p class="card-text">{{ p.content | truncatewords:50 }}</p>
+                    <a href="{{ p.get_absolute_url }}" class="btn btn-primary" id="read-more-post-{{ p.pk }}">Read More
+                        &rarr;</a>
+                </div>
+                <div class="card-footer text-muted">
+                    Posted on {{ p.created }} by
+                    <a href="#">{{ p.author }}</a>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h3>아직 게시물이 없습니다. </h3>
+    {% endif %}
+{% endblock %}
